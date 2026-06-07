@@ -1,0 +1,10 @@
+@import "tailwindcss";
+
+@theme {
+  /* Exact Hex Primary */
+  --color-primary: #fc2d8b;
+  
+  /* Generated Hover & Light variants matching the exact hex hue */
+  --color-primary-hover: #d1166b;   /* Slightly darker for hover feedback */
+  --color-primary-light: #fff0f6;   /* Soft pink tint for alert boxes/backgrounds */
+}
