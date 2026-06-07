@@ -1,10 +1,15 @@
 @import "tailwindcss";
 
 @theme {
-  /* Exact Hex Primary */
+  /* TourBee Brand Colors */
   --color-primary: #fc2d8b;
-  
-  /* Generated Hover & Light variants matching the exact hex hue */
-  --color-primary-hover: #d1166b;   /* Slightly darker for hover feedback */
-  --color-primary-light: #fff0f6;   /* Soft pink tint for alert boxes/backgrounds */
+  --color-primary-hover: #d1166b;
+  --color-primary-light: #fff0f6;
+
+  /* Global Layout Tokens (Tailwind v4 Semantic Mapping) */
+  --color-background: #ffffff;         /* Base page background */
+  --color-foreground: #0f172a;         /* Main crisp text (Slate 900) */
+  --color-muted-foreground: #64748b;   /* Secondary/Subtle text (Slate 500) */
+  --color-border: #e2e8f0;             /* Clean grid lines (Slate 200) */
+  --color-muted: #f8fafc;              /* Light gray background elements (Slate 50) */
 }
