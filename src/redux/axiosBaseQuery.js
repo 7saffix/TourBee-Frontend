@@ -28,6 +28,6 @@ export const baseApi = createApi({
   reducerPath: "baseApi",
   baseQuery: axiosBaseQuery(),
   // Global cache tags used to automatically refetch data when things change
-  tagTypes: ["User", "Tours", "Bookings"],
+  tagTypes: ["USER"],
   endpoints: () => ({}), // Keep this empty! We inject everything into this later.
 });

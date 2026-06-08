@@ -1,6 +1,6 @@
 import { baseApi } from "../axiosBaseQuery";
 
-const authApi = baseApi.injectEndpoints({
+export const authApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     register: builder.mutation({
       query: (userInfo) => ({
@@ -8,7 +8,6 @@ const authApi = baseApi.injectEndpoints({
         method: "POST",
         data: userInfo,
       }),
-      invalidatesTags: ["User"],
     }),
 
     login: builder.mutation({
@@ -18,7 +17,16 @@ const authApi = baseApi.injectEndpoints({
         data: userInfo,
       }),
     }),
+
+    logOut: builder.mutation({
+      query: () => ({
+        url: "/auth/logout",
+        method: "POST",
+      }),
+      invalidatesTags: ["USER"],
+    }),
   }),
 });
 
-export const { useRegisterMutation, useLoginMutation } = authApi;
+export const { useRegisterMutation, useLoginMutation, useLogOutMutation } =
+  authApi;
