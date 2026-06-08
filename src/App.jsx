@@ -5,7 +5,6 @@ function App() {
   return (
     <div>
       <CommonLayout>
-        <p>this is app</p>
         <Outlet />
       </CommonLayout>
     </div>

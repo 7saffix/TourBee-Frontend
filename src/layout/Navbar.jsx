@@ -5,7 +5,6 @@ import { Rocket, Menu, X, User } from "lucide-react";
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
-  // Clean helper array for navigation links
   const navLinks = [
     { name: "Home", path: "/" },
     { name: "Tours", path: "/tours" },
@@ -74,47 +73,51 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Mobile Drawer Menu */}
-      {isOpen && (
-        <div className="md:hidden border-b border-border bg-background animate-in fade-in slide-in-from-top-5 duration-200">
-          <div className="px-4 pt-2 pb-6 space-y-3 sm:px-3 shadow-inner">
-            {navLinks.map((link) => (
-              <NavLink
-                key={link.name}
-                to={link.path}
-                onClick={() => setIsOpen(false)}
-                className={({ isActive }) =>
-                  `block px-3 py-2 rounded-xl text-base font-medium transition-colors ${
-                    isActive
-                      ? "bg-primary-light text-primary font-semibold"
-                      : "text-muted-foreground hover:text-primary hover:bg-muted"
-                  }`
-                }
-              >
-                {link.name}
-              </NavLink>
-            ))}
+      {/* Mobile Drawer Menu - Now hardware accelerated, smooth-transitioning, and floating */}
+      <div
+        className={`absolute top-full left-0 right-0 md:hidden border-b border-border bg-background shadow-xl transition-all duration-300 ease-out origin-top transform ${
+          isOpen
+            ? "opacity-100 translate-y-0 scale-y-100 pointer-events-auto"
+            : "opacity-0 -translate-y-4 scale-y-95 pointer-events-none"
+        }`}
+      >
+        <div className="px-4 pt-2 pb-6 space-y-3 sm:px-3 shadow-inner">
+          {navLinks.map((link) => (
+            <NavLink
+              key={link.name}
+              to={link.path}
+              onClick={() => setIsOpen(false)}
+              className={({ isActive }) =>
+                `block px-3 py-2 rounded-xl text-base font-medium transition-colors ${
+                  isActive
+                    ? "bg-primary-light text-primary font-semibold"
+                    : "text-muted-foreground hover:text-primary hover:bg-muted"
+                }`
+              }
+            >
+              {link.name}
+            </NavLink>
+          ))}
 
-            <div className="pt-4 border-t border-border flex flex-col space-y-3 px-3">
-              <Link
-                to="/login"
-                onClick={() => setIsOpen(false)}
-                className="text-base font-medium text-muted-foreground hover:text-primary transition-colors flex items-center gap-2 py-2"
-              >
-                <User size={18} />
-                Login / Account
-              </Link>
-              <Link
-                to="/tours"
-                onClick={() => setIsOpen(false)}
-                className="bg-primary hover:bg-primary-hover text-white text-center font-semibold py-2.5 rounded-xl shadow-md transition-colors"
-              >
-                Book Now
-              </Link>
-            </div>
+          <div className="pt-4 border-t border-border flex flex-col space-y-3 px-3">
+            <Link
+              to="/login"
+              onClick={() => setIsOpen(false)}
+              className="text-base font-medium text-muted-foreground hover:text-primary transition-colors flex items-center gap-2 py-2"
+            >
+              <User size={18} />
+              Login / Account
+            </Link>
+            <Link
+              to="/tours"
+              onClick={() => setIsOpen(false)}
+              className="bg-primary hover:bg-primary-hover text-white text-center font-semibold py-2.5 rounded-xl shadow-md transition-colors"
+            >
+              Book Now
+            </Link>
           </div>
         </div>
-      )}
+      </div>
     </nav>
   );
 };
