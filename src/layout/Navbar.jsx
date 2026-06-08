@@ -10,6 +10,7 @@ const Navbar = () => {
   const { data } = useProfileQuery();
   const [logOut] = useLogOutMutation();
   const dispatch = useDispatch();
+
   const handleLogOut = async () => {
     try {
       const res = await logOut();
@@ -61,16 +62,25 @@ const Navbar = () => {
           {/* Right Action Buttons */}
           <div className="hidden md:flex items-center space-x-4 min-w-[140px] justify-end">
             {data?.data?.email ? (
-              <button
-                onClick={handleLogOut}
-                className="flex items-center gap-2 px-4 py-2 text-primary hover:bg-primary-light rounded-xl transition-all font-bold text-sm group"
-              >
-                <LogOut
-                  size={18}
-                  className="group-hover:-translate-x-1 transition-transform"
-                />
-                <span>Logout</span>
-              </button>
+              <>
+                {data?.data?.role == "USER" && (
+                  <Link to="/user">Dashboard</Link>
+                )}
+                {data?.data?.role == "ADMIN" ||
+                  (data?.data?.role == "SUPER_ADMIN" && (
+                    <Link to="/admin">Dashboard</Link>
+                  ))}
+                <button
+                  onClick={handleLogOut}
+                  className="flex items-center gap-2 px-4 py-2 text-primary hover:bg-primary-light rounded-xl transition-all font-bold text-sm group"
+                >
+                  <LogOut
+                    size={18}
+                    className="group-hover:-translate-x-1 transition-transform"
+                  />
+                  <span>Logout</span>
+                </button>
+              </>
             ) : (
               <>
                 <Link
@@ -130,21 +140,43 @@ const Navbar = () => {
           ))}
 
           <div className="pt-4 border-t border-border flex flex-col space-y-3 px-3">
-            <Link
-              to="/login"
-              onClick={() => setIsOpen(false)}
-              className="text-base font-medium text-muted-foreground hover:text-primary transition-colors flex items-center gap-2 py-2"
-            >
-              <User size={18} />
-              Login / Account
-            </Link>
-            <Link
-              to="/register"
-              onClick={() => setIsOpen(false)}
-              className="bg-primary hover:bg-primary-hover text-white text-center font-semibold py-2.5 rounded-xl shadow-md transition-colors"
-            >
-              Get Start
-            </Link>
+            {data?.data?.email ? (
+              <>
+                {data?.data?.role == "USER" && (
+                  <Link to="/user">Dashboard</Link>
+                )}
+                {data?.data?.role == "ADMIN" ||
+                  (data?.data?.role == "SUPER_ADMIN" && (
+                    <Link to="/admin">Dashboard</Link>
+                  ))}
+                <button
+                  onClick={handleLogOut}
+                  className="flex items-center gap-2 px-4 py-2 text-primary hover:bg-primary-light rounded-xl transition-all font-bold text-sm group"
+                >
+                  <LogOut
+                    size={18}
+                    className="group-hover:-translate-x-1 transition-transform"
+                  />
+                  <span>Logout</span>
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  to="/login"
+                  className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors flex items-center gap-1.5"
+                >
+                  <User size={16} />
+                  Login
+                </Link>
+                <Link
+                  to="/register"
+                  className="bg-primary hover:bg-primary-hover text-white text-sm font-semibold px-4 py-2 rounded-xl shadow-sm transition-all duration-200 active:scale-98"
+                >
+                  Get Start
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </div>
