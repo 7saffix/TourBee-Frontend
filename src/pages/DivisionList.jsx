@@ -5,7 +5,7 @@ import {
   X,
   Edit2,
   Trash2,
-  Image as ImageIcon,
+  // Image as ImageIcon,
   UploadCloud,
 } from "lucide-react";
 import { useGetDivisionQuery } from "../redux/Api/tour.api";
@@ -128,10 +128,10 @@ const DivisionList = () => {
       {/* Simplified Static Data Table Container */}
       <div className="bg-background border border-border rounded-xl shadow-sm overflow-hidden">
         <div className="overflow-x-auto w-full">
-          <table className="w-full text-left border-collapse min-w-[600px]">
+          <table className="w-full text-left border-collapse min-w-[400px]">
             <thead>
               <tr className="border-b border-border bg-muted/30 text-xs font-semibold uppercase tracking-wider text-muted-foreground select-none">
-                <th className="p-4 w-28">Thumbnail</th>
+                {/* <th className="p-4 w-28">Thumbnail</th> */}
                 <th className="p-4 w-52">Division Name</th>
                 <th className="p-4">Description</th>
                 <th className="p-4 w-28 text-right">Actions</th>
@@ -144,7 +144,7 @@ const DivisionList = () => {
                     key={div._id || div.id}
                     className="hover:bg-muted/20 transition-colors group"
                   >
-                    <td className="p-4">
+                    {/* <td className="p-4">
                       {div.thumbnail ? (
                         <img
                           src={div.thumbnail}
@@ -156,7 +156,7 @@ const DivisionList = () => {
                           <ImageIcon size={14} />
                         </div>
                       )}
-                    </td>
+                    </td> */}
                     <td className="p-4 font-bold text-foreground tracking-wide align-middle whitespace-nowrap">
                       {div.name}
                     </td>

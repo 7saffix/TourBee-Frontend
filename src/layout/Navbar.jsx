@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, NavLink } from "react-router";
-import { Rocket, Menu, X, User, LogOut } from "lucide-react";
+import { Rocket, Menu, X, User, LogOut, LayoutDashboard } from "lucide-react";
 import { useProfileQuery, userApi } from "../redux/Api/user.api";
 import { useLogOutMutation } from "../redux/Api/auth.api";
 import { useDispatch } from "react-redux";
@@ -64,11 +64,29 @@ const Navbar = () => {
             {data?.data?.email ? (
               <>
                 {data?.data?.role == "USER" && (
-                  <Link to="/user">Dashboard</Link>
+                  <Link
+                    to="/user"
+                    className="flex items-center gap-2 px-4 py-2 text-primary hover:bg-primary-light rounded-xl transition-all font-bold text-sm group"
+                  >
+                    <LayoutDashboard
+                      size={18}
+                      className="group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-transform"
+                    />
+                    <span>Dashboard</span>
+                  </Link>
                 )}
                 {data?.data?.role == "ADMIN" ||
                   (data?.data?.role == "SUPER_ADMIN" && (
-                    <Link to="/admin">Dashboard</Link>
+                    <Link
+                      to="/admin"
+                      className="flex items-center gap-2  p-2 text-primary hover:bg-primary-light rounded-xl transition-all font-bold text-sm group"
+                    >
+                      <LayoutDashboard
+                        size={18}
+                        className="group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-transform"
+                      />
+                      <span>Dashboard</span>
+                    </Link>
                   ))}
                 <button
                   onClick={handleLogOut}
@@ -143,11 +161,29 @@ const Navbar = () => {
             {data?.data?.email ? (
               <>
                 {data?.data?.role == "USER" && (
-                  <Link to="/user">Dashboard</Link>
+                  <Link
+                    to="/user"
+                    className="flex items-center gap-2 px-4 py-2  hover:bg-primary-light rounded-xl transition-all font-bold text-sm group"
+                  >
+                    <LayoutDashboard
+                      size={18}
+                      className="group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-transform"
+                    />
+                    <span>Dashboard</span>
+                  </Link>
                 )}
                 {data?.data?.role == "ADMIN" ||
                   (data?.data?.role == "SUPER_ADMIN" && (
-                    <Link to="/admin">Dashboard</Link>
+                    <Link
+                      to="/admin"
+                      className="flex items-center gap-2  p-2  hover:bg-primary-light rounded-xl transition-all font-bold text-sm group"
+                    >
+                      <LayoutDashboard
+                        size={18}
+                        className="group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-transform"
+                      />
+                      <span>Dashboard</span>
+                    </Link>
                   ))}
                 <button
                   onClick={handleLogOut}

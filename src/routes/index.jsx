@@ -7,12 +7,17 @@ import DashboardLayout from "../layout/DashboardLayout";
 import { UserSideBarItems } from "./UserSidebarItems";
 import { generateRoutes } from "../utils/generateRoutes";
 import { AdminSideBarItems } from "./AdminSidebarItems";
+import Home from "../pages/Home";
 
 const router = createBrowserRouter([
   {
     Component: App,
     path: "/",
     children: [
+      {
+        Component: Home,
+        path: "/",
+      },
       {
         Component: About,
         path: "about",
