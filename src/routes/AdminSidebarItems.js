@@ -1,5 +1,7 @@
-import { Compass } from "lucide-react";
-import Tours from "../pages/Tours";
+import { Map, Tags, MapPinned } from "lucide-react";
+import TourList from "../pages/TourList";
+import TourTypeList from "../pages/TourTypeList";
+import DivisionList from "../pages/DivisionList";
 
 export const AdminSideBarItems = [
   {
@@ -8,8 +10,20 @@ export const AdminSideBarItems = [
       {
         title: "Tours",
         url: "/admin/tours",
-        component: Tours,
-        icon: Compass,
+        component: TourList,
+        icon: Map,
+      },
+      {
+        title: "Tour Types",
+        url: "/admin/tour-types",
+        component: TourTypeList,
+        icon: Tags,
+      },
+      {
+        title: "Tour Division",
+        url: "/admin/division",
+        component: DivisionList,
+        icon: MapPinned,
       },
     ],
   },

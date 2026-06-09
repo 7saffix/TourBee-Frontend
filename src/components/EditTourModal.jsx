@@ -1,0 +1,379 @@
+/* eslint-disable react-hooks/set-state-in-effect */
+import { useState, useEffect } from "react";
+import { X, UploadCloud } from "lucide-react";
+
+const EditTourModal = ({
+  isOpen,
+  onClose,
+  categories,
+  divisions,
+  tourData,
+}) => {
+  const [activeTab, setActiveTab] = useState("basic");
+  const [formData, setFormData] = useState({
+    title: "",
+    tourType: "",
+    division: "",
+    description: "",
+    location: "",
+    costForm: "",
+    maxGuest: "",
+    minAge: "",
+    startDate: "",
+    endDate: "",
+    images: [],
+    included: "",
+    excluded: "",
+    amenities: "",
+    tourPlan: "",
+  });
+
+  useEffect(() => {
+    if (isOpen && tourData) {
+      setFormData({
+        title: tourData.title || "",
+        // Handle object references or plain ID strings gracefully
+        tourType: tourData.tourType?._id || tourData.tourType || "",
+        division: tourData.division?._id || tourData.division || "",
+        description: tourData.description || "",
+        location: tourData.location || "",
+        costForm: tourData.costForm || "",
+        maxGuest: tourData.maxGuest || "",
+        minAge: tourData.minAge || "",
+        startDate: tourData.startDate ? tourData.startDate.split("T")[0] : "",
+        endDate: tourData.endDate ? tourData.endDate.split("T")[0] : "",
+        images: tourData.images || [],
+        included: tourData.included || "",
+        excluded: tourData.excluded || "",
+        amenities: tourData.amenities || "",
+        tourPlan: tourData.tourPlan || "",
+      });
+    }
+  }, [isOpen, tourData]);
+
+  if (!isOpen) return null;
+
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+    console.log(
+      "Submitting Update Action for Target ID:",
+      tourData?._id,
+      formData,
+    );
+    onClose();
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/40 backdrop-blur-md">
+      <div className="w-full max-w-2xl bg-background border border-border rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-in fade-in zoom-in-95 duration-150">
+        {/* Header */}
+        <div className="flex items-center justify-between p-4 border-b border-border bg-muted/20">
+          <h2 className="font-bold text-md tracking-tight">
+            ⚙️ Update Tour Package Configuration
+          </h2>
+          <button
+            onClick={onClose}
+            className="p-1.5 rounded-lg border border-border hover:bg-muted text-muted-foreground"
+          >
+            <X size={16} />
+          </button>
+        </div>
+
+        {/* Tabs */}
+        <div className="flex border-b border-border bg-muted/10 text-xs font-bold uppercase tracking-wider select-none">
+          {["basic", "schedule", "features"].map((tab) => (
+            <button
+              key={tab}
+              type="button"
+              onClick={() => setActiveTab(tab)}
+              className={`flex-1 py-3 text-center transition-colors border-b-2 ${
+                activeTab === tab
+                  ? "border-primary text-primary bg-background"
+                  : "border-transparent text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              {tab} Info
+            </button>
+          ))}
+        </div>
+
+        {/* Form Body */}
+        <form
+          onSubmit={handleFormSubmit}
+          className="flex-1 overflow-y-auto p-6 space-y-4"
+        >
+          {activeTab === "basic" && (
+            <div className="space-y-4 animate-in fade-in duration-200">
+              {/* Row 1: Title, Category, and Dynamic Division */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-muted-foreground uppercase">
+                    Tour Title *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g., Sundarbans Escape"
+                    className="w-full bg-muted/20 border border-border rounded-xl px-3.5 py-2 text-sm focus:border-primary focus:outline-none"
+                    value={formData.title}
+                    onChange={(e) =>
+                      setFormData({ ...formData, title: e.target.value })
+                    }
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-muted-foreground uppercase">
+                    Category Type *
+                  </label>
+                  <select
+                    required
+                    className="w-full bg-muted/20 border border-border rounded-xl px-3.5 py-2 text-sm focus:border-primary text-muted-foreground font-semibold h-[38px]"
+                    value={formData.tourType}
+                    onChange={(e) =>
+                      setFormData({ ...formData, tourType: e.target.value })
+                    }
+                  >
+                    <option value="">Select Category</option>
+                    {categories.map((c) => (
+                      <option key={c._id || c.id} value={c._id || c.id}>
+                        {c.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-muted-foreground uppercase">
+                    Division *
+                  </label>
+                  <select
+                    required
+                    className="w-full bg-muted/20 border border-border rounded-xl px-3.5 py-2 text-sm focus:border-primary text-muted-foreground font-semibold h-[38px]"
+                    value={formData.division}
+                    onChange={(e) =>
+                      setFormData({ ...formData, division: e.target.value })
+                    }
+                  >
+                    <option value="">Select Division</option>
+                    {divisions.map((div) => (
+                      <option key={div._id || div.id} value={div._id || div.id}>
+                        {div.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {/* Row 2: Location and Cost */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-muted-foreground uppercase">
+                    Base Location Pin *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g., Khulna, Bangladesh"
+                    className="w-full bg-muted/20 border border-border rounded-xl px-3.5 py-2 text-sm focus:border-primary focus:outline-none"
+                    value={formData.location}
+                    onChange={(e) =>
+                      setFormData({ ...formData, location: e.target.value })
+                    }
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-muted-foreground uppercase">
+                    Base Cost From ($) *
+                  </label>
+                  <input
+                    type="number"
+                    required
+                    placeholder="e.g., 450"
+                    className="w-full bg-muted/20 border border-border rounded-xl px-3.5 py-2 text-sm focus:border-primary focus:outline-none"
+                    value={formData.costForm}
+                    onChange={(e) =>
+                      setFormData({ ...formData, costForm: e.target.value })
+                    }
+                  />
+                </div>
+              </div>
+
+              {/* Description */}
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-muted-foreground uppercase">
+                  Itinerary Description Context
+                </label>
+                <textarea
+                  rows="3"
+                  placeholder="Elaborate regarding trip plans, routes, milestones..."
+                  className="w-full bg-muted/20 border border-border rounded-xl px-3.5 py-2 text-sm focus:border-primary resize-none focus:outline-none"
+                  value={formData.description}
+                  onChange={(e) =>
+                    setFormData({ ...formData, description: e.target.value })
+                  }
+                />
+              </div>
+
+              {/* Image Upload Component */}
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-muted-foreground uppercase">
+                  Package Image Catalog
+                </label>
+                <div className="border-2 border-dashed border-border hover:border-primary/40 rounded-xl p-4 bg-muted/10 text-center cursor-pointer transition-colors flex flex-col items-center gap-1">
+                  <UploadCloud size={20} className="text-muted-foreground" />
+                  <span className="text-xs font-semibold text-foreground">
+                    Change or append catalog attachments
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === "schedule" && (
+            <div className="space-y-4 animate-in fade-in duration-200">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-muted-foreground uppercase">
+                    Start Date
+                  </label>
+                  <input
+                    type="date"
+                    className="w-full bg-muted/20 border border-border rounded-xl px-3.5 py-2 text-sm focus:border-primary focus:outline-none text-muted-foreground"
+                    value={formData.startDate}
+                    onChange={(e) =>
+                      setFormData({ ...formData, startDate: e.target.value })
+                    }
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-muted-foreground uppercase">
+                    End Date
+                  </label>
+                  <input
+                    type="date"
+                    className="w-full bg-muted/20 border border-border rounded-xl px-3.5 py-2 text-sm focus:border-primary focus:outline-none text-muted-foreground"
+                    value={formData.endDate}
+                    onChange={(e) =>
+                      setFormData({ ...formData, endDate: e.target.value })
+                    }
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-muted-foreground uppercase">
+                    Max Guest Capacity Limit
+                  </label>
+                  <input
+                    type="number"
+                    placeholder="e.g., 25"
+                    className="w-full bg-muted/20 border border-border rounded-xl px-3.5 py-2 text-sm focus:border-primary focus:outline-none"
+                    value={formData.maxGuest}
+                    onChange={(e) =>
+                      setFormData({ ...formData, maxGuest: e.target.value })
+                    }
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-muted-foreground uppercase">
+                    Minimum Age Restriction
+                  </label>
+                  <input
+                    type="number"
+                    placeholder="e.g., 12"
+                    className="w-full bg-muted/20 border border-border rounded-xl px-3.5 py-2 text-sm focus:border-primary focus:outline-none"
+                    value={formData.minAge}
+                    onChange={(e) =>
+                      setFormData({ ...formData, minAge: e.target.value })
+                    }
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === "features" && (
+            <div className="space-y-4 animate-in fade-in duration-200">
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-muted-foreground uppercase">
+                  Included Services
+                </label>
+                <input
+                  type="text"
+                  placeholder="Luxury Transport, Hotel, Breakfast"
+                  className="w-full bg-muted/20 border border-border rounded-xl px-3.5 py-2 text-sm focus:border-primary focus:outline-none"
+                  value={formData.included}
+                  onChange={(e) =>
+                    setFormData({ ...formData, included: e.target.value })
+                  }
+                />
+              </div>
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-muted-foreground uppercase">
+                  Excluded Services
+                </label>
+                <input
+                  type="text"
+                  placeholder="Porter tips, Entry tickets"
+                  className="w-full bg-muted/20 border border-border rounded-xl px-3.5 py-2 text-sm focus:border-primary focus:outline-none"
+                  value={formData.excluded}
+                  onChange={(e) =>
+                    setFormData({ ...formData, excluded: e.target.value })
+                  }
+                />
+              </div>
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-muted-foreground uppercase">
+                  Core Amenities
+                </label>
+                <input
+                  type="text"
+                  placeholder="Wi-Fi, First-Aid Kit, Tour Guide"
+                  className="w-full bg-muted/20 border border-border rounded-xl px-3.5 py-2 text-sm focus:border-primary focus:outline-none"
+                  value={formData.amenities}
+                  onChange={(e) =>
+                    setFormData({ ...formData, amenities: e.target.value })
+                  }
+                />
+              </div>
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-muted-foreground uppercase">
+                  Structured Plan Milestones
+                </label>
+                <textarea
+                  rows="2"
+                  placeholder="Day 1: Arrival, Day 2: Trekking"
+                  className="w-full bg-muted/20 border border-border rounded-xl px-3.5 py-2 text-sm focus:border-primary resize-none focus:outline-none"
+                  value={formData.tourPlan}
+                  onChange={(e) =>
+                    setFormData({ ...formData, tourPlan: e.target.value })
+                  }
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Sticky Actions Footer */}
+          <div className="pt-4 border-t border-border flex items-center justify-end gap-2 bg-background sticky bottom-0">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 border border-border rounded-xl text-sm font-semibold hover:bg-muted transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="px-5 py-2 bg-primary text-white hover:bg-primary/90 rounded-xl text-sm font-semibold shadow-md shadow-primary/10 transition-colors"
+            >
+              Save Changes
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+export default EditTourModal;
