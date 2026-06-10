@@ -13,6 +13,7 @@ import {
   Trash2,
 } from "lucide-react";
 import {
+  useDeleteTourMutation,
   useGetDivisionQuery,
   useGetToursQuery,
   useGetTourTypeQuery,
@@ -21,6 +22,8 @@ import Loader from "../components/Loader";
 import CreateTourModal from "../components/CreateTourModal";
 import EditTourModal from "../components/EditTourModal";
 import ViewTourModal from "../components/ViewTourModal";
+import DeleteModal from "../components/DeleteModal";
+import { toast } from "sonner";
 
 const TourList = () => {
   const [queryParams, setQueryParams] = useState({
@@ -65,6 +68,24 @@ const TourList = () => {
   const triggerEditDialog = (tour) => {
     setSelectedTour(tour);
     setModalState((prev) => ({ ...prev, edit: true }));
+  };
+
+  const [deleteTargetId, setDeleteTargetId] = useState(null);
+  const [deleteTour, { isLoading: isDeleting }] = useDeleteTourMutation();
+
+  const handleConfirmDelete = async () => {
+    try {
+      await deleteTour(deleteTargetId);
+      setDeleteTargetId(null);
+      toast.success("Delete successfully");
+    } catch (error) {
+      console.log(error);
+      toast.error(
+        error.data?.message ||
+          error.response?.data?.message ||
+          error.response?.message,
+      );
+    }
   };
 
   const renderPageNumbers = () => {
@@ -204,20 +225,21 @@ const TourList = () => {
                       <button
                         onClick={() => triggerViewDialog(tour)}
                         title="View Details"
-                        className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg"
+                        className="cursor-pointer p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg"
                       >
                         <Eye size={15} />
                       </button>
                       <button
                         onClick={() => triggerEditDialog(tour)}
                         title="Edit Records"
-                        className="p-2 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg"
+                        className="cursor-pointer p-2 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg"
                       >
                         <Edit2 size={14} />
                       </button>
                       <button
+                        onClick={() => setDeleteTargetId(tour._id)}
                         title="Delete"
-                        className="p-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg"
+                        className="cursor-pointer p-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg"
                       >
                         <Trash2 size={14} />
                       </button>
@@ -278,6 +300,13 @@ const TourList = () => {
         isOpen={modalState.view}
         onClose={() => setModalState((prev) => ({ ...prev, view: false }))}
         tour={selectedTour}
+      />
+
+      <DeleteModal
+        target={deleteTargetId}
+        onClose={() => setDeleteTargetId(null)}
+        onConfirm={handleConfirmDelete}
+        isDeleting={isDeleting}
       />
     </div>
   );

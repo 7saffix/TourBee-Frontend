@@ -30,8 +30,21 @@ export const tourAPi = baseApi.injectEndpoints({
           location: params.location || undefined,
         },
       }),
+      providesTags: ["TOUR"],
+    }),
+
+    deleteTour: builder.mutation({
+      query: (tourId) => ({
+        url: `/tour/${tourId}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["TOUR"],
     }),
   }),
 });
-export const { useGetDivisionQuery, useGetTourTypeQuery, useGetToursQuery } =
-  tourAPi;
+export const {
+  useGetDivisionQuery,
+  useGetTourTypeQuery,
+  useGetToursQuery,
+  useDeleteTourMutation,
+} = tourAPi;
