@@ -8,6 +8,8 @@ import { UserSideBarItems } from "./UserSidebarItems";
 import { generateRoutes } from "../utils/generateRoutes";
 import { AdminSideBarItems } from "./AdminSidebarItems";
 import Home from "../pages/Home";
+import Tours from "../pages/Tours";
+import TourDetails from "../pages/TourDetails";
 
 const router = createBrowserRouter([
   {
@@ -17,6 +19,14 @@ const router = createBrowserRouter([
       {
         Component: Home,
         path: "/",
+      },
+      {
+        Component: Tours,
+        path: "tours",
+      },
+      {
+        Component: TourDetails,
+        path: "tours/:id",
       },
       {
         Component: About,

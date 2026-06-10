@@ -27,6 +27,7 @@ export const tourAPi = baseApi.injectEndpoints({
           limit: params.limit || 5,
           tourType: params.tourType || undefined,
           maxCost: params.maxCost || undefined,
+          location: params.location || undefined,
         },
       }),
     }),

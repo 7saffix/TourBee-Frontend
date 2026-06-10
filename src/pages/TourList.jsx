@@ -43,6 +43,7 @@ const TourList = () => {
   const { data: tourTypeData } = useGetTourTypeQuery();
 
   const tours = tourData?.data || [];
+
   const meta = tourData?.meta || { page: 1, limit: 5, total: 0 };
   const categories = tourTypeData?.data || [];
   const divisions = divisionData?.data || [];
