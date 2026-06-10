@@ -9,7 +9,6 @@ import {
   Compass,
   Search,
   MapPin,
-  Users,
 } from "lucide-react";
 import {
   useGetToursQuery,
@@ -314,16 +313,8 @@ const Tours = () => {
 
 /* Individual Tour Cards Presentation Module mapping database response attributes */
 const TourCard = ({ tour, viewMode }) => {
-  const {
-    _id,
-    title,
-    description,
-    images,
-    location,
-    costForm,
-    maxGuest,
-    tourPlan,
-  } = tour;
+  const { _id, title, description, images, location, costForm, tourPlan } =
+    tour;
   const isGrid = viewMode === "grid";
 
   const routeIdentifier = _id;
@@ -373,16 +364,16 @@ const TourCard = ({ tour, viewMode }) => {
             <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-wider">
               Per Traveler
             </p>
-            <p className="text-xs sm:text-sm font-sans font-black text-foreground truncate">
+            <p className="text-xs sm:text-sm font-sans font-black text-foreground ">
               ৳{costForm?.toLocaleString()} BDT
             </p>
           </div>
 
           <div className="flex items-center gap-2 shrink-0">
-            <span className="inline-flex items-center gap-1 text-[9px] font-bold text-muted-foreground px-2 py-1 bg-muted rounded-lg border border-border/40">
+            {/* <span className="inline-flex items-center gap-1 text-[9px] font-bold text-muted-foreground px-2 py-1 bg-muted rounded-lg border border-border/40">
               <Users size={10} />
               <span>Max {maxGuest}</span>
-            </span>
+            </span> */}
             <span className="text-[9px] font-bold bg-primary/10 text-primary px-2 py-1 rounded-lg border border-primary/20">
               {calculatedDuration}
             </span>

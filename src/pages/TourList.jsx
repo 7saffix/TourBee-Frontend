@@ -6,13 +6,13 @@ import {
   ChevronLeft,
   ChevronRight,
   ArrowUpDown,
-  CircleDollarSign,
   Calendar,
   Eye,
   Edit2,
   Trash2,
 } from "lucide-react";
 import {
+  useCreateTourMutation,
   useDeleteTourMutation,
   useGetDivisionQuery,
   useGetToursQuery,
@@ -33,7 +33,6 @@ const TourList = () => {
     limit: 5,
   });
 
-  // Track specific states for control dialog visibility and target data nodes
   const [modalState, setModalState] = useState({
     create: false,
     edit: false,
@@ -46,7 +45,6 @@ const TourList = () => {
   const { data: tourTypeData } = useGetTourTypeQuery();
 
   const tours = tourData?.data || [];
-
   const meta = tourData?.meta || { page: 1, limit: 5, total: 0 };
   const categories = tourTypeData?.data || [];
   const divisions = divisionData?.data || [];
@@ -59,6 +57,35 @@ const TourList = () => {
       [field]: value,
       page: field === "page" ? value : 1,
     }));
+  };
+
+  const [createTour, { isLoading: isCreating }] = useCreateTourMutation();
+
+  const handleCreateTourSubmit = async (payload) => {
+    const formDataBody = new FormData();
+
+    payload.images?.forEach((file) => {
+      if (file instanceof File) formDataBody.append("files", file);
+    });
+
+    Object.keys(payload).forEach((key) => {
+      if (key === "images") return;
+
+      if (Array.isArray(payload[key])) {
+        payload[key].forEach((val) => formDataBody.append(key, val));
+      } else if (payload[key] !== undefined && payload[key] !== null) {
+        formDataBody.append(key, payload[key]);
+      }
+    });
+
+    try {
+      await createTour(formDataBody).unwrap();
+      setModalState((prev) => ({ ...prev, create: false }));
+      toast.success("Tour package created successfully");
+    } catch (error) {
+      console.error(error);
+      toast.error(error.data?.message || "Failed to create tour package.");
+    }
   };
 
   const triggerViewDialog = (tour) => {
@@ -75,16 +102,12 @@ const TourList = () => {
 
   const handleConfirmDelete = async () => {
     try {
-      await deleteTour(deleteTargetId);
+      await deleteTour(deleteTargetId).unwrap();
       setDeleteTargetId(null);
-      toast.success("Delete successfully");
+      toast.success("Deleted successfully");
     } catch (error) {
-      console.log(error);
-      toast.error(
-        error.data?.message ||
-          error.response?.data?.message ||
-          error.response?.message,
-      );
+      console.error(error);
+      toast.error(error.data?.message || "Failed to delete package.");
     }
   };
 
@@ -123,7 +146,6 @@ const TourList = () => {
 
   return (
     <div className="space-y-6">
-      {/* Upper Control Bar Layout */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
@@ -135,13 +157,12 @@ const TourList = () => {
         </div>
         <button
           onClick={() => setModalState((prev) => ({ ...prev, create: true }))}
-          className="flex items-center justify-center gap-2 bg-primary text-white hover:bg-primary/90 px-4 py-2.5 rounded-xl text-sm font-semibold shadow-md shadow-primary/10 transition-all"
+          className="flex items-center justify-center gap-2 bg-primary text-white hover:bg-primary/90 px-4 py-2.5 rounded-xl text-sm font-semibold shadow-md transition-all cursor-pointer"
         >
           <Plus size={16} /> Add New Tour
         </button>
       </div>
 
-      {/* Query Filter Actions Grid panel */}
       <div className="bg-background border border-border rounded-xl p-4 grid grid-cols-1 md:grid-cols-3 gap-3 shadow-sm">
         <div className="relative md:col-span-2">
           <Search
@@ -173,7 +194,6 @@ const TourList = () => {
         </div>
       </div>
 
-      {/* Table grid space view */}
       <div className="bg-background border border-border rounded-xl shadow-sm overflow-hidden">
         <div className="overflow-x-auto w-full">
           <table className="w-full text-left border-collapse min-w-[750px]">
@@ -203,13 +223,9 @@ const TourList = () => {
                   <td className="p-4 text-muted-foreground font-medium">
                     📍 {tour.location}
                   </td>
-                  <td className="p-4 font-bold text-foreground">
+                  <td className="p-4 font-bold">
                     <div className="flex items-center gap-1">
-                      <CircleDollarSign
-                        size={15}
-                        className="text-emerald-500"
-                      />{" "}
-                      ${tour.costForm}
+                      ৳{tour.costForm}
                     </div>
                   </td>
                   <td className="p-4 text-xs font-semibold text-muted-foreground">
@@ -251,7 +267,6 @@ const TourList = () => {
           </table>
         </div>
 
-        {/* Dynamic Numbered Pagination controls layout */}
         {totalPages > 1 && (
           <div className="p-4 border-t border-border flex items-center justify-between bg-muted/10 select-none">
             <button
@@ -282,13 +297,15 @@ const TourList = () => {
         )}
       </div>
 
-      {/* Modular Separate Component Injectors */}
       <CreateTourModal
         isOpen={modalState.create}
         onClose={() => setModalState((prev) => ({ ...prev, create: false }))}
         categories={categories}
         divisions={divisions}
+        onCreate={handleCreateTourSubmit}
+        isCreating={isCreating}
       />
+
       <EditTourModal
         isOpen={modalState.edit}
         onClose={() => setModalState((prev) => ({ ...prev, edit: false }))}
@@ -296,6 +313,7 @@ const TourList = () => {
         divisions={divisions}
         tourData={selectedTour}
       />
+
       <ViewTourModal
         isOpen={modalState.view}
         onClose={() => setModalState((prev) => ({ ...prev, view: false }))}
