@@ -1,7 +1,9 @@
 import { ArrowUpRight, Compass } from "lucide-react";
 import { useGetDivisionQuery } from "../redux/Api/tour.api";
+import { useNavigate } from "react-router";
 
-const FeaturedDestination = ({ onRegionClick }) => {
+const FeaturedDestination = () => {
+  const navigate = useNavigate();
   const { data: divisionResponse, isLoading, isError } = useGetDivisionQuery();
 
   const divisions = divisionResponse?.data;
@@ -24,7 +26,7 @@ const FeaturedDestination = ({ onRegionClick }) => {
 
   return (
     // Enforcing strict container sizing boundaries at the root level of the section
-    <section className="w-full max-w-full bg-background py-12 md:py-20 border-b border-border overflow-x-hidden block">
+    <section className="w-full max-w-full bg-background py-12 md:py-20 border-b border-border overflow-x-hidden block ">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-8 md:space-y-12">
         {/* Header Section */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
@@ -54,7 +56,7 @@ const FeaturedDestination = ({ onRegionClick }) => {
           [&::-webkit-scrollbar-thumb]:bg-border
           [&::-webkit-scrollbar-thumb]:rounded-full
           hover:[&::-webkit-scrollbar-thumb]:bg-primary/40
-          transition-colors"
+          transition-colors no-scrollbar"
         >
           {divisions?.map((div, index) => {
             const displayImage =
@@ -70,8 +72,8 @@ const FeaturedDestination = ({ onRegionClick }) => {
             return (
               <div
                 key={div._id || div.id || index}
-                onClick={() => onRegionClick && onRegionClick(div)}
-                className={`group relative h-[360px] sm:h-[400px] md:h-[440px] rounded-xl md:rounded-2xl overflow-hidden border border-border bg-muted cursor-pointer transition-all duration-500 ease-out hover:-translate-y-1 hover:md:-translate-y-1.5 hover:shadow-xl hover:shadow-slate-200/60 ${widthClass}`}
+                onClick={() => navigate(`/tours?division=${div._id}`)}
+                className={`group relative h-80 rounded-xl md:rounded-2xl overflow-hidden border border-border bg-muted cursor-pointer transition-all duration-500 ease-out hover:-translate-y-1 hover:md:-translate-y-1.5 hover:shadow-xl hover:shadow-slate-200/60 ${widthClass}`}
               >
                 {/* Visual Imagery Layer */}
                 <div className="absolute inset-0 w-full h-full">
@@ -85,11 +87,11 @@ const FeaturedDestination = ({ onRegionClick }) => {
                 </div>
 
                 {/* Floating Meta Badges */}
-                <div className="absolute top-3 left-3 md:top-4 md:left-4 z-10">
+                {/* <div className="absolute top-3 left-3 md:top-4 md:left-4 z-10">
                   <span className="text-[9px] md:text-[10px] font-bold bg-white/95 text-slate-900 px-2 md:px-2.5 py-0.5 md:py-1 rounded-full uppercase tracking-wider shadow-xs">
                     {div.tourCount || 0} Experiences
                   </span>
-                </div>
+                </div> */}
 
                 {/* Card Content Footer Section */}
                 <div className="absolute inset-x-0 bottom-0 p-4 md:p-6 z-10 flex items-end justify-between text-white">

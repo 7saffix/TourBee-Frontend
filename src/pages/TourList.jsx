@@ -17,6 +17,7 @@ import {
   useGetDivisionQuery,
   useGetToursQuery,
   useGetTourTypeQuery,
+  useUpdateTourMutation,
 } from "../redux/Api/tour.api";
 import Loader from "../components/Loader";
 import CreateTourModal from "../components/CreateTourModal";
@@ -43,6 +44,10 @@ const TourList = () => {
   const { data: tourData, isLoading, isError } = useGetToursQuery(queryParams);
   const { data: divisionData } = useGetDivisionQuery();
   const { data: tourTypeData } = useGetTourTypeQuery();
+  const [createTour, { isLoading: isCreating }] = useCreateTourMutation();
+  const [updateTour, { isLoading: isUpdating }] = useUpdateTourMutation();
+  const [deleteTargetId, setDeleteTargetId] = useState(null);
+  const [deleteTour, { isLoading: isDeleting }] = useDeleteTourMutation();
 
   const tours = tourData?.data || [];
   const meta = tourData?.meta || { page: 1, limit: 5, total: 0 };
@@ -58,8 +63,6 @@ const TourList = () => {
       page: field === "page" ? value : 1,
     }));
   };
-
-  const [createTour, { isLoading: isCreating }] = useCreateTourMutation();
 
   const handleCreateTourSubmit = async (payload) => {
     const formDataBody = new FormData();
@@ -88,6 +91,38 @@ const TourList = () => {
     }
   };
 
+  const handleUpdateTourSubmit = async (tourId, payload) => {
+    const formDataBody = new FormData();
+
+    payload.images?.forEach((file) => {
+      if (file instanceof File) {
+        formDataBody.append("files", file); // Appends new binary data files
+      } else if (typeof file === "string") {
+        formDataBody.append("existingImages", file); // Optional: if backend tracks existing paths
+      }
+    });
+
+    // 2. Append standard fields onto data payload model
+    Object.keys(payload).forEach((key) => {
+      if (key === "images") return;
+
+      if (Array.isArray(payload[key])) {
+        payload[key].forEach((val) => formDataBody.append(key, val));
+      } else if (payload[key] !== undefined && payload[key] !== null) {
+        formDataBody.append(key, payload[key]);
+      }
+    });
+
+    try {
+      await updateTour({ tourId, tourInfo: formDataBody }).unwrap();
+
+      toast.success("Tour package configured successfully");
+    } catch (error) {
+      console.error(error);
+      toast.error(error.data?.message || "Failed to update tour package.");
+    }
+  };
+
   const triggerViewDialog = (tour) => {
     setSelectedTour(tour);
     setModalState((prev) => ({ ...prev, view: true }));
@@ -96,9 +131,6 @@ const TourList = () => {
     setSelectedTour(tour);
     setModalState((prev) => ({ ...prev, edit: true }));
   };
-
-  const [deleteTargetId, setDeleteTargetId] = useState(null);
-  const [deleteTour, { isLoading: isDeleting }] = useDeleteTourMutation();
 
   const handleConfirmDelete = async () => {
     try {
@@ -312,6 +344,8 @@ const TourList = () => {
         categories={categories}
         divisions={divisions}
         tourData={selectedTour}
+        onUpdate={handleUpdateTourSubmit}
+        isUpdating={isUpdating}
       />
 
       <ViewTourModal

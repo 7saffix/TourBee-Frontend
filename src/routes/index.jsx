@@ -10,6 +10,7 @@ import { AdminSideBarItems } from "./AdminSidebarItems";
 import Home from "../pages/Home";
 import Tours from "../pages/Tours";
 import TourDetails from "../pages/TourDetails";
+import Contact from "../pages/Contact";
 
 const router = createBrowserRouter([
   {
@@ -31,6 +32,10 @@ const router = createBrowserRouter([
       {
         Component: About,
         path: "about",
+      },
+      {
+        Component: Contact,
+        path: "contact",
       },
     ],
   },

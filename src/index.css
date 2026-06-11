@@ -13,3 +13,6 @@
   --color-border: #e2e8f0;             /* Clean grid lines (Slate 200) */
   --color-muted: #f8fafc;              /* Light gray background elements (Slate 50) */
 }
+
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }

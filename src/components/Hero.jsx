@@ -1,25 +1,28 @@
 import { useState } from "react";
-import { Search, MapPin, Compass, ArrowRight, Sparkles } from "lucide-react";
+import { Search, ArrowRight, Sparkles } from "lucide-react";
+import { useNavigate } from "react-router";
 
-const Hero = ({ divisions = [], tourTypes = [], onSearchSubmit }) => {
-  const [filters, setFilters] = useState({
-    searchQuery: "",
-    division: "",
-    type: "",
-  });
+const Hero = ({ onSearchSubmit }) => {
+  const navigate = useNavigate();
+  const [filters, setFilters] = useState({ searchQuery: "" });
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    const q = filters.searchQuery.trim();
+    if (onSearchSubmit) {
+      onSearchSubmit(q);
+    } else {
+      navigate(`/tours${q ? `?search=${encodeURIComponent(q)}` : ""}`);
+    }
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFilters((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSearch = (e) => {
-    e.preventDefault();
-    if (onSearchSubmit) onSearchSubmit(filters);
-  };
-
   return (
-    <div className="relative w-full bg-background flex flex-col items-center  pb-20 px-4 sm:px-6 overflow-hidden border-b border-border">
+    <div className="relative bg-background flex flex-col items-center pb-20 px-4 sm:px-6 overflow-hidden border-b border-border w-full max-w-full overflow-x-hidden">
       {/* Soft Ambient Travel Glow Effects utilizing your Brand Primary */}
       <div className="absolute top-[-10%] right-[-10%] w-[300px] sm:w-[500px] h-[300px] sm:h-[500px] bg-primary/5 rounded-full blur-[80px] sm:blur-[120px] pointer-events-none" />
       <div className="absolute bottom-[-10%] left-[-10%] w-[400px] sm:w-[600px] h-[400px] sm:h-[600px] bg-primary/[0.03] rounded-full blur-[100px] sm:blur-[140px] pointer-events-none" />
@@ -51,13 +54,13 @@ const Hero = ({ divisions = [], tourTypes = [], onSearchSubmit }) => {
           </p>
         </div>
 
-        {/* Smooth Glassmorphism Search Filter Input Matrix */}
+        {/* Smooth Glassmorphism Search Input Box */}
         <form
           onSubmit={handleSearch}
-          className="w-full max-w-4xl mx-auto p-2 sm:p-3 bg-background/80 border border-border rounded-2xl sm:rounded-[32px] shadow-xl shadow-slate-100/50 backdrop-blur-xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 items-center text-left"
+          className="w-full max-w-2xl mx-auto p-2 bg-background/80 border border-border rounded-2xl sm:rounded-full shadow-xl shadow-slate-100/50 backdrop-blur-xl flex flex-col sm:flex-row items-center gap-2 text-left"
         >
           {/* Destination Search Box */}
-          <div className="flex items-center gap-3 px-4 py-2.5 hover:bg-muted rounded-xl sm:rounded-2xl transition-all duration-300 group border-b border-border/50 lg:border-b-0 lg:border-r last:border-0 border-dashed sm:border-b-0 min-w-0 w-full">
+          <div className="flex items-center gap-3 px-4 py-2.5 hover:bg-muted/50 rounded-xl sm:rounded-full transition-all duration-300 group min-w-0 flex-1 w-full">
             <Search
               size={18}
               className="text-muted-foreground/60 group-hover:text-primary transition-colors shrink-0"
@@ -77,75 +80,11 @@ const Hero = ({ divisions = [], tourTypes = [], onSearchSubmit }) => {
             </div>
           </div>
 
-          {/* Division Filter Dropdown */}
-          <div className="flex items-center gap-3 px-4 py-2.5 hover:bg-muted rounded-xl sm:rounded-2xl transition-all duration-300 group border-b border-border/50 lg:border-b-0 lg:border-r last:border-0 border-dashed sm:border-b-0 min-w-0 w-full">
-            <MapPin
-              size={18}
-              className="text-muted-foreground/60 group-hover:text-primary transition-colors shrink-0"
-            />
-            <div className="flex-1 min-w-0 w-full">
-              <label className="block text-[9px] sm:text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
-                Region
-              </label>
-              <select
-                name="division"
-                value={filters.division}
-                onChange={handleInputChange}
-                className="w-full bg-transparent text-sm text-foreground font-semibold focus:outline-none mt-0.5 cursor-pointer appearance-none min-w-0 truncate"
-              >
-                <option value="" className="bg-background">
-                  Everywhere
-                </option>
-                {divisions.map((div) => (
-                  <option
-                    key={div._id || div.id}
-                    value={div.name}
-                    className="bg-background"
-                  >
-                    {div.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          {/* Tour Type/Experience Dropdown */}
-          <div className="flex items-center gap-3 px-4 py-2.5 hover:bg-muted rounded-xl sm:rounded-2xl transition-all duration-300 group border-b border-border/50 lg:border-b-0 last:border-0 border-dashed sm:border-b-0 sm:col-span-2 lg:col-span-1 lg:border-r min-w-0 w-full">
-            <Compass
-              size={18}
-              className="text-muted-foreground/60 group-hover:text-primary transition-colors shrink-0"
-            />
-            <div className="flex-1 min-w-0 w-full">
-              <label className="block text-[9px] sm:text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
-                Experience
-              </label>
-              <select
-                name="type"
-                value={filters.type}
-                onChange={handleInputChange}
-                className="w-full bg-transparent text-sm text-foreground font-semibold focus:outline-none mt-0.5 cursor-pointer appearance-none min-w-0 truncate"
-              >
-                <option value="" className="bg-background">
-                  All Styles
-                </option>
-                {tourTypes.map((type) => (
-                  <option
-                    key={type._id || type.id}
-                    value={type.name}
-                    className="bg-background"
-                  >
-                    {type.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          {/* Clean Interactive Action Button Utilizing Primary Colors */}
-          <div className="w-full pt-2 sm:pt-0 sm:col-span-2 lg:col-span-1">
+          {/* Clean Interactive Action Button */}
+          <div className="w-full sm:w-auto shrink-0">
             <button
               type="submit"
-              className="w-full h-11 sm:h-12 bg-primary hover:bg-primary-hover text-white font-bold text-sm rounded-xl sm:rounded-2xl shadow-md shadow-primary/10 hover:shadow-lg hover:shadow-primary/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2 group"
+              className="w-full h-11 sm:h-12 px-6 bg-primary hover:bg-primary/95 text-white font-bold text-sm rounded-xl sm:rounded-full shadow-md shadow-primary/10 hover:shadow-lg hover:shadow-primary/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2 group cursor-pointer"
             >
               <span className="truncate">Explore Journeys</span>
               <ArrowRight

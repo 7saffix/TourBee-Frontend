@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   SlidersHorizontal,
   ArrowLeftRight,
@@ -16,18 +16,28 @@ import {
   useGetTourTypeQuery,
 } from "../redux/Api/tour.api";
 import TourFilter from "../components/TourFilter";
-import { Link } from "react-router";
+import { Link, useSearchParams } from "react-router";
 
 const Tours = () => {
+  useEffect(() => {
+    window.scrollTo({ top: 100, behavior: "smooth" });
+  }, []);
+  const [searchParams] = useSearchParams();
+
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
   const [viewMode, setViewMode] = useState("grid");
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [searchQuery, setSearchQuery] = useState(
+    searchParams.get("search") || "",
+  );
+  const [debouncedSearch, setDebouncedSearch] = useState(
+    searchParams.get("search") || "",
+  );
+
   const [filters, setFilters] = useState({
-    location: "",
-    tourType: "",
+    division: searchParams.get("division") || "",
+    tourType: searchParams.get("tourType") || "",
     maxCost: "",
     sortBy: "",
   });
@@ -45,7 +55,7 @@ const Tours = () => {
     limit: ITEMS_PER_PAGE,
     search: debouncedSearch || undefined,
     sortBy: filters.sortBy || undefined,
-    location: filters.location || undefined,
+    division: filters.division || undefined,
     tourType: filters.tourType || undefined,
     maxCost: filters.maxCost || undefined,
   });
@@ -56,8 +66,6 @@ const Tours = () => {
   const tours = toursResponse?.data || [];
   const totalItems = toursResponse?.meta?.total || 0;
   const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE) || 1;
-
-  console.log(tours);
 
   const divisions = divisionsResponse?.data || divisionsResponse || [];
   const tourTypes = tourTypesResponse?.data || tourTypesResponse || [];
@@ -77,14 +85,14 @@ const Tours = () => {
   const handleClearFilters = () => {
     setSearchQuery("");
     setDebouncedSearch("");
-    setFilters({ location: "", tourType: "", maxCost: "", sortBy: "" });
+    setFilters({ division: "", tourType: "", maxCost: "", sortBy: "" });
     setCurrentPage(1);
   };
 
   return (
     <div className="w-full max-w-full min-h-screen bg-background text-foreground overflow-x-hidden">
       {/* Top Context Section Banner */}
-      <div className="w-full border-b border-border bg-muted/30 py-8 md:py-12 px-4 sm:px-6">
+      <div className="w-full border-b border-border bg-muted/30 px-4 sm:px-6">
         <div className="max-w-7xl mx-auto space-y-3">
           <div className="inline-flex items-center gap-1.5 text-primary text-[10px] md:text-xs font-bold uppercase tracking-widest">
             <Compass size={14} />
@@ -136,7 +144,7 @@ const Tours = () => {
             </button>
 
             <div className="flex items-center gap-3">
-              <div className="flex items-center gap-1.5 bg-muted border border-border p-0.5 rounded-lg text-muted-foreground">
+              <div className="hidden sm:flex items-center gap-1.5 bg-muted border border-border p-0.5 rounded-lg text-muted-foreground">
                 <button
                   onClick={() => setViewMode("grid")}
                   className={`p-1 rounded-md transition-colors ${viewMode === "grid" ? "bg-background text-primary shadow-xs" : "hover:text-foreground"}`}
@@ -274,7 +282,7 @@ const Tours = () => {
 
       {/* MOBILE DRAWER SHEET RENDERING OVERLAY */}
       {isMobileFilterOpen && (
-        <div className="fixed inset-0 z-50 flex justify-end bg-black/40 backdrop-blur-xs animate-in fade-in duration-200">
+        <div className="fixed inset-0 z-50 flex justify-end bg-black/40 backdrop-blur-xs animate-in duration-200">
           <div
             onClick={() => setIsMobileFilterOpen(false)}
             className="absolute inset-0"

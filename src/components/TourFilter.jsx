@@ -27,8 +27,8 @@ const TourFilter = ({
             Geographical Sector (location)
           </label>
           <select
-            name="location"
-            value={filters.location}
+            name="division"
+            value={filters.division}
             onChange={onFilterChange}
             className="w-full h-10 bg-muted border border-border rounded-xl px-3 text-xs font-semibold focus:outline-none focus:border-primary cursor-pointer text-foreground transition-colors"
           >

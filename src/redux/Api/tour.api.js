@@ -27,7 +27,7 @@ export const tourAPi = baseApi.injectEndpoints({
           limit: params.limit || 5,
           tourType: params.tourType || undefined,
           maxCost: params.maxCost || undefined,
-          location: params.location || undefined,
+          division: params.division || undefined,
         },
       }),
       providesTags: ["TOUR"],
@@ -37,6 +37,15 @@ export const tourAPi = baseApi.injectEndpoints({
       query: (tourInfo) => ({
         url: "/tour/create",
         method: "POST",
+        data: tourInfo,
+      }),
+      invalidatesTags: ["TOUR"],
+    }),
+
+    updateTour: builder.mutation({
+      query: ({ tourId, tourInfo }) => ({
+        url: `/tour/${tourId}`,
+        method: "PATCH",
         data: tourInfo,
       }),
       invalidatesTags: ["TOUR"],
@@ -56,5 +65,6 @@ export const {
   useGetTourTypeQuery,
   useGetToursQuery,
   useCreateTourMutation,
+  useUpdateTourMutation,
   useDeleteTourMutation,
 } = tourAPi;

@@ -46,7 +46,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, user, onLogout }) => {
       </div>
 
       {/* Grouped Links Navigation Container */}
-      <nav className="flex-1 p-3 space-y-6 overflow-y-auto mt-4">
+      <nav className="flex-1 p-3 space-y-6 overflow-y-auto mt-4 no-scrollbar">
         {menuItems.map((group) => (
           <div key={group.title} className="space-y-1.5">
             {/* Section Category Title Header */}
