@@ -11,6 +11,10 @@ import Home from "../pages/Home";
 import Tours from "../pages/Tours";
 import TourDetails from "../pages/TourDetails";
 import Contact from "../pages/Contact";
+import Checkout from "../pages/Checkout";
+import PaymentSuccess from "../pages/PaymentSuccess";
+import PaymentFailure from "../pages/PaymentFailure";
+import PaymentCancel from "../pages/PaymentCancel";
 
 const router = createBrowserRouter([
   {
@@ -56,6 +60,22 @@ const router = createBrowserRouter([
     ],
   },
 
+  {
+    Component: Checkout,
+    path: "checkout",
+  },
+  {
+    Component: PaymentSuccess,
+    path: "payment/success",
+  },
+  {
+    Component: PaymentFailure,
+    path: "payment/fail",
+  },
+  {
+    Component: PaymentCancel,
+    path: "payment/cancel",
+  },
   {
     Component: Login,
     path: "login",

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useParams, Link } from "react-router";
+import { useParams, Link, useNavigate } from "react-router";
 import {
   MapPin,
   Users,
@@ -17,9 +17,11 @@ import {
   Info,
 } from "lucide-react";
 import { useGetToursQuery } from "../redux/Api/tour.api";
+import { useCreateBookingMutation } from "../redux/Api/booking.api";
 
 const TourDetails = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const {
     data: toursResponse,
     isLoading,
@@ -27,6 +29,7 @@ const TourDetails = () => {
   } = useGetToursQuery({
     page: 1,
   });
+  const [createBooking, { isLoading: isBooking }] = useCreateBookingMutation();
 
   const tours = toursResponse?.tours || toursResponse?.data || [];
 
@@ -34,7 +37,6 @@ const TourDetails = () => {
 
   const [activeImgIdx, setActiveImgIdx] = useState(0);
   const [guestCount, setGuestCount] = useState(1);
-  const [bookingDate, setBookingDate] = useState("");
   const [isSaved, setIsSaved] = useState(false);
 
   if (isLoading) {
@@ -76,19 +78,27 @@ const TourDetails = () => {
           "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&q=80&w=1200",
         ];
 
-  const handleBookingSubmit = (e) => {
+  const handleBookingSubmit = async (e) => {
     e.preventDefault();
     const checkoutPayload = {
-      tourId: tour._id,
-      slotsRequested: guestCount,
-      preferredDate: bookingDate,
-      totalPrice: (tour.costForm || 0) * guestCount,
+      tour: tour._id,
+      guestCount: Number(guestCount),
     };
-    console.log(
-      "Pushing transactional initialization matrix array payload:",
-      checkoutPayload,
-    );
-    // Wire up your structural useCreateBookingMutation() endpoint here
+    try {
+      const response = await createBooking(checkoutPayload).unwrap();
+      console.log(response);
+
+      if (response?.success && response?.data) {
+        navigate("/checkout", {
+          state: {
+            booking: response?.data?.booking,
+            paymentUrl: response?.data?.paymentUrl,
+          },
+        });
+      }
+    } catch (error) {
+      console.error("Booking transactional failure:", error);
+    }
   };
 
   return (
@@ -182,12 +192,23 @@ const TourDetails = () => {
                 <Clock size={16} />
               </div>
               <div className="min-w-0">
-                <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-wider">
-                  Duration
-                </p>
-                <p className="text-xs font-bold text-foreground truncate">
-                  {tour.tourPlan?.length || 0} Exploration Days
-                </p>
+                <div className=" bg-muted/20 rounded-xl flex items-center gap-2.5">
+                  <div>
+                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide">
+                      Schedule Setup
+                    </p>
+                    <p className="font-semibold text-foreground text-xs">
+                      {tour.startDate
+                        ? new Date(tour.startDate).toLocaleDateString(
+                            undefined,
+                            {
+                              dateStyle: "medium",
+                            },
+                          )
+                        : "Flexible Operational Track"}
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -351,19 +372,6 @@ const TourDetails = () => {
           <form onSubmit={handleBookingSubmit} className="space-y-4 text-left">
             <div className="space-y-1.5">
               <label className="block text-[10px] font-black text-muted-foreground uppercase tracking-widest">
-                Target Deployment Date
-              </label>
-              <input
-                type="date"
-                required
-                value={bookingDate}
-                onChange={(e) => setBookingDate(e.target.value)}
-                className="w-full h-10 bg-muted border border-border rounded-xl px-3 text-xs font-semibold focus:outline-none focus:border-primary text-foreground"
-              />
-            </div>
-
-            <div className="space-y-1.5">
-              <label className="block text-[10px] font-black text-muted-foreground uppercase tracking-widest">
                 Traveler Roster Allocation
               </label>
               <div className="flex items-center justify-between border border-border bg-muted h-10 rounded-xl px-2">
@@ -410,11 +418,18 @@ const TourDetails = () => {
             </div>
 
             <button
-              type="submit"
+              // to={"/checkout"}
+              onClick={handleBookingSubmit}
               className="w-full h-11 bg-primary text-white font-bold text-xs uppercase tracking-wider rounded-xl hover:bg-primary/90 transition-colors flex items-center justify-center gap-2 mt-6 cursor-pointer"
             >
-              <span>Book Now</span>
-              <ChevronRight size={14} />
+              {isBooking ? (
+                "Booking"
+              ) : (
+                <>
+                  <span>Book Now</span>
+                  <ChevronRight size={14} />
+                </>
+              )}
             </button>
           </form>
         </div>
