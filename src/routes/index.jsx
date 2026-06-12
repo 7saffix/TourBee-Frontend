@@ -15,6 +15,7 @@ import Checkout from "../pages/Checkout";
 import PaymentSuccess from "../pages/PaymentSuccess";
 import PaymentFailure from "../pages/PaymentFailure";
 import PaymentCancel from "../pages/PaymentCancel";
+import AuthCheck from "../utils/AuthCheck";
 
 const router = createBrowserRouter([
   {
@@ -23,7 +24,7 @@ const router = createBrowserRouter([
     children: [
       {
         Component: Home,
-        path: "/",
+        index: true,
       },
       {
         Component: Tours,
@@ -44,7 +45,7 @@ const router = createBrowserRouter([
     ],
   },
   {
-    Component: DashboardLayout,
+    Component: AuthCheck(DashboardLayout, ["USER"]),
     path: "/user",
     children: [
       { index: true, element: <Navigate to="/user/booking" /> },
@@ -52,7 +53,7 @@ const router = createBrowserRouter([
     ],
   },
   {
-    Component: DashboardLayout,
+    Component: AuthCheck(DashboardLayout, ["ADMIN", "SUPER_ADMIN"]),
     path: "/admin",
     children: [
       { index: true, element: <Navigate to="/admin/tours" /> },

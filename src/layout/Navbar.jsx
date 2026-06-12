@@ -255,9 +255,10 @@ import {
   Compass,
   Info,
 } from "lucide-react";
+
+import { useDispatch } from "react-redux";
 import { useProfileQuery, userApi } from "../redux/Api/user.api";
 import { useLogOutMutation } from "../redux/Api/auth.api";
-import { useDispatch } from "react-redux";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -267,7 +268,7 @@ const Navbar = () => {
 
   const handleLogOut = async () => {
     try {
-      const res = await logOut();
+      const res = await logOut().unwrap();
       dispatch(userApi.util.resetApiState());
       console.log(res);
     } catch (error) {
@@ -441,14 +442,24 @@ const Navbar = () => {
                     <span>Dashboard</span>
                   </Link>
                 )}
+                {/* <button
+                    onClick={() => {
+                      handleLogOut();
+                    }}
+                    className="cursor-pointer flex items-center gap-2.5 px-4 py-2 text-sm text-destructive font-medium rounded-xl hover:bg-destructive/5 text-left"
+                  >
+                    <LogOut size={16} />
+                    <span>Logout</span>
+                  </button> */}
+
                 <button
-                  onClick={() => {
-                    handleLogOut();
-                    setIsOpen(false);
-                  }}
-                  className="cursor-pointer flex items-center gap-2.5 px-4 py-2 text-sm text-destructive font-medium rounded-xl hover:bg-destructive/5 text-left"
+                  onClick={handleLogOut}
+                  className="cursor-pointer flex items-center gap-1.5 px-3 py-1.5 text-destructive bg-destructive/[0.03] hover:bg-destructive/10 border border-destructive/10 rounded-xl transition-all font-semibold text-xs group focus:outline-none"
                 >
-                  <LogOut size={16} />
+                  <LogOut
+                    size={14}
+                    className="group-hover:-translate-x-0.5 transition-transform duration-300"
+                  />
                   <span>Logout</span>
                 </button>
               </>

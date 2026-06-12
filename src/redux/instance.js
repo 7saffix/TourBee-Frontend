@@ -4,6 +4,9 @@ const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
   withCredentials: true,
   timeout: 10000,
+  // headers: {
+  //   "Content-Type": "application/json",
+  // },
 });
 
 // Basic interceptor for logging errors globally
