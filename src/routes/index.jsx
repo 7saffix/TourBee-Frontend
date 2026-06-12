@@ -62,27 +62,27 @@ const router = createBrowserRouter([
 
   {
     Component: Checkout,
-    path: "checkout",
+    path: "/checkout",
   },
   {
     Component: PaymentSuccess,
-    path: "payment/success",
+    path: "/payment/success",
   },
   {
     Component: PaymentFailure,
-    path: "payment/fail",
+    path: "/payment/fail",
   },
   {
     Component: PaymentCancel,
-    path: "payment/cancel",
+    path: "/payment/cancel",
   },
   {
     Component: Login,
-    path: "login",
+    path: "/login",
   },
   {
     Component: Register,
-    path: "register",
+    path: "/register",
   },
 ]);
 
