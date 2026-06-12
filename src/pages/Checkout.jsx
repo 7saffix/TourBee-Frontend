@@ -16,8 +16,6 @@ const Checkout = () => {
   const bookingData = location.state?.booking;
   const paymentUrl = location.state?.paymentUrl;
 
-  console.log(bookingData, paymentUrl);
-
   if (!bookingData) {
     return (
       <div className="w-full min-h-screen bg-background text-foreground flex flex-col items-center justify-center p-4">

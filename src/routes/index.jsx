@@ -48,7 +48,7 @@ const router = createBrowserRouter([
     Component: AuthCheck(DashboardLayout, ["USER"]),
     path: "/user",
     children: [
-      { index: true, element: <Navigate to="/user/booking" /> },
+      { index: true, element: <Navigate to="/user/my-bookings" /> },
       ...generateRoutes(UserSideBarItems),
     ],
   },

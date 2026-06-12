@@ -1,5 +1,5 @@
 import { Compass } from "lucide-react";
-import Booking from "../pages/Booking";
+import MyBookings from "../pages/MyBooking";
 
 export const UserSideBarItems = [
   {
@@ -7,8 +7,8 @@ export const UserSideBarItems = [
     items: [
       {
         title: "MY Bookings",
-        url: "/user/booking",
-        component: Booking,
+        url: "/user/my-bookings",
+        component: MyBookings,
         icon: Compass,
       },
     ],

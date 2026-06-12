@@ -2,12 +2,12 @@ import { baseApi } from "../axiosBaseQuery";
 
 export const bookingAPi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    // getDivision: builder.query({
-    //   query: () => ({
-    //     url: "/division",
-    //     method: "GET",
-    //   }),
-    // }),
+    getMyBookings: builder.query({
+      query: () => ({
+        url: "/booking/my-bookings",
+        method: "GET",
+      }),
+    }),
 
     createBooking: builder.mutation({
       query: (bookingInfo) => ({
@@ -19,4 +19,4 @@ export const bookingAPi = baseApi.injectEndpoints({
     }),
   }),
 });
-export const { useCreateBookingMutation } = bookingAPi;
+export const { useCreateBookingMutation, useGetMyBookingsQuery } = bookingAPi;
