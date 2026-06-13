@@ -53,7 +53,7 @@ const PaymentCancel = () => {
           </button>
 
           <button
-            onClick={() => navigate("/dashboard/my-bookings")}
+            onClick={() => navigate("/user/my-bookings")}
             className="h-11 bg-foreground text-background rounded-xl text-[11px] font-bold uppercase tracking-wider flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
           >
             View Bookings

@@ -1,6 +1,14 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router";
-import { Rocket, Mail, Lock, Eye, EyeOff, ArrowRight } from "lucide-react";
+import {
+  Rocket,
+  Mail,
+  Lock,
+  Eye,
+  EyeOff,
+  ArrowRight,
+  Loader2,
+} from "lucide-react";
 import { useLoginMutation } from "../redux/Api/auth.api";
 import { toast } from "sonner";
 
@@ -123,7 +131,9 @@ const Login = () => {
             className="group relative w-full flex items-center justify-center gap-2 bg-primary hover:bg-primary-hover text-white font-semibold py-3 px-4 rounded-xl shadow-md transition-all duration-200 active:scale-98 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2"
           >
             {isLoading ? (
-              <> Logging</>
+              <>
+                <Loader2 size={14} className="animate-spin" />
+              </>
             ) : (
               <>
                 Sign In

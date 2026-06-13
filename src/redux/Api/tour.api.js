@@ -9,6 +9,15 @@ export const tourAPi = baseApi.injectEndpoints({
       }),
     }),
 
+    editDivision: builder.mutation({
+      query: ({ divisionId, divisionInfo }) => ({
+        url: `/division/${divisionId}`,
+        method: "PATCH",
+        data: divisionInfo,
+      }),
+      invalidatesTags: ["DIVISION"],
+    }),
+
     getTourType: builder.query({
       query: () => ({
         url: "/tour/tour-types",
@@ -62,6 +71,7 @@ export const tourAPi = baseApi.injectEndpoints({
 });
 export const {
   useGetDivisionQuery,
+  useEditDivisionMutation,
   useGetTourTypeQuery,
   useGetToursQuery,
   useCreateTourMutation,

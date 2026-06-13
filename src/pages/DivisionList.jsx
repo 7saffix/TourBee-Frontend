@@ -8,7 +8,12 @@ import {
   // Image as ImageIcon,
   UploadCloud,
 } from "lucide-react";
-import { useGetDivisionQuery } from "../redux/Api/tour.api";
+import {
+  // useEditDivisionMutation,
+  useGetDivisionQuery,
+  // useCreateDivisionMutation,
+  // useDeleteDivisionMutation,
+} from "../redux/Api/tour.api";
 import Loader from "../components/Loader";
 
 const DivisionList = () => {
@@ -18,26 +23,29 @@ const DivisionList = () => {
     isError,
     error,
   } = useGetDivisionQuery();
-
-  console.log(responseData);
+  // const [createDivision] = useCreateDivisionMutation();
+  // const [updateDivision] = useEditDivisionMutation();
+  // const [deleteDivision] = useDeleteDivisionMutation();
 
   const divisions = responseData?.data || [];
 
-  // Local state management for mutations (Create/Edit)
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingId, setEditingId] = useState(null);
+
   const [formData, setFormData] = useState({
     name: "",
-    thumbnail: null,
     description: "",
   });
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState("");
 
   const fileInputRef = useRef(null);
 
-  // Modal Controllers
   const openCreateModal = () => {
     setEditingId(null);
-    setFormData({ name: "", thumbnail: null, description: "" });
+    setFormData({ name: "", description: "" });
+    setSelectedFile(null);
+    setPreviewUrl("");
     setIsModalOpen(true);
   };
 
@@ -45,42 +53,66 @@ const DivisionList = () => {
     setEditingId(division._id || division.id);
     setFormData({
       name: division.name,
-      thumbnail: division.thumbnail || null,
       description: division.description || "",
     });
+    setSelectedFile(null);
+    setPreviewUrl(division.thumbnail || "");
     setIsModalOpen(true);
   };
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      const localImageURL = URL.createObjectURL(file);
-      setFormData({ ...formData, thumbnail: localImageURL });
+      setSelectedFile(file);
+      setPreviewUrl(URL.createObjectURL(file));
     }
   };
 
-  const handleSaveDivision = (e) => {
+  const handleSaveDivision = async (e) => {
     e.preventDefault();
     if (!formData.name.trim()) return;
 
-    // TODO: Wire up your RTK Query useCreateDivisionMutation / useUpdateDivisionMutation here
-    console.log("Saving Data:", { editingId, formData });
+    const multiPartForm = new FormData();
+    multiPartForm.append("name", formData.name.trim());
+    multiPartForm.append("description", formData.description.trim());
 
-    setIsModalOpen(false);
-  };
+    if (selectedFile) {
+      multiPartForm.append("thumbnail", selectedFile);
+    }
 
-  const handleDelete = (id) => {
-    // TODO: Wire up your RTK Query useDeleteDivisionMutation here
-    if (
-      window.confirm(
-        "Are you sure you want to permanently delete this division?",
-      )
-    ) {
-      console.log("Deleting ID:", id);
+    try {
+      if (editingId) {
+        // const res = await updateDivision({
+        //   divisionId: editingId,
+        //   divisionInfo: multiPartForm,
+        // }).unwrap();
+        // console.log(res);
+        // } else {
+        //    await createDivision(multiPartForm).unwrap();
+        //    console.log("Division created successfully");
+        //
+      }
+      setIsModalOpen(false);
+    } catch (err) {
+      console.error("Failed to commit operation parameters:", err);
     }
   };
 
-  // 2. Render Loading State using our custom Rocket Loader
+  // const handleDelete = async (id) => {
+  //   if (
+  //     window.confirm(
+  //       "Are you sure you want to permanently delete this division?",
+  //     )
+  //   ) {
+  //     try {
+  //       await deleteDivision(id).unwrap();
+  //       console.log("Division deleted successfully");
+  //     } catch (err) {
+  //       console.error("Deletion exception encountered:", err);
+  //     }
+  //   }
+  // };
+
   if (isLoading) {
     return (
       <div className="w-full min-h-[50vh] flex items-center justify-center">
@@ -89,7 +121,6 @@ const DivisionList = () => {
     );
   }
 
-  // 3. Render Error State
   if (isError) {
     return (
       <div className="bg-destructive/10 border border-destructive/20 text-destructive text-sm p-4 rounded-xl max-w-xl mx-auto text-center mt-8">
@@ -118,17 +149,17 @@ const DivisionList = () => {
 
         <button
           onClick={openCreateModal}
-          className="flex items-center justify-center gap-2 bg-primary text-white hover:bg-primary/90 px-4 py-2.5 rounded-xl text-sm font-semibold shadow-md shadow-primary/10 transition-all self-start sm:self-auto"
+          className="flex items-center justify-center gap-2 bg-primary text-white hover:bg-primary/90 px-4 py-2.5 rounded-xl text-sm font-semibold shadow-md shadow-primary/10 transition-all self-start sm:self-auto cursor-pointer"
         >
           <Plus size={16} />
           Add Division
         </button>
       </div>
 
-      {/* Simplified Static Data Table Container */}
+      {/* Table Section */}
       <div className="bg-background border border-border rounded-xl shadow-sm overflow-hidden">
         <div className="overflow-x-auto w-full">
-          <table className="w-full text-left border-collapse min-w-[400px]">
+          <table className="w-full text-left border-collapse min-w-[500px]">
             <thead>
               <tr className="border-b border-border bg-muted/30 text-xs font-semibold uppercase tracking-wider text-muted-foreground select-none">
                 {/* <th className="p-4 w-28">Thumbnail</th> */}
@@ -149,10 +180,10 @@ const DivisionList = () => {
                         <img
                           src={div.thumbnail}
                           alt={div.name}
-                          className="h-11 w-18 object-cover rounded-lg border border-border bg-muted shrink-0 shadow-sm"
+                          className="h-11 w-20 object-cover rounded-lg border border-border bg-muted shrink-0 shadow-sm"
                         />
                       ) : (
-                        <div className="h-11 w-18 rounded-lg border border-dashed border-border bg-muted/40 flex items-center justify-center text-muted-foreground/40 shrink-0">
+                        <div className="h-11 w-20 rounded-lg border border-dashed border-border bg-muted/40 flex items-center justify-center text-muted-foreground/40 shrink-0">
                           <ImageIcon size={14} />
                         </div>
                       )}
@@ -169,13 +200,13 @@ const DivisionList = () => {
                       <div className="flex items-center justify-end gap-1.5">
                         <button
                           onClick={() => openEditModal(div)}
-                          className="p-2 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-all border border-transparent hover:border-primary/20"
+                          className="cursor-pointer p-2 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-all border border-transparent hover:border-primary/20"
                         >
                           <Edit2 size={15} />
                         </button>
                         <button
-                          onClick={() => handleDelete(div._id || div.id)}
-                          className="p-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg transition-all border border-transparent hover:border-destructive/20"
+                          // onClick={() => handleDelete(div._id || div.id)}
+                          className="cursor-pointer p-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg transition-all border border-transparent hover:border-destructive/20"
                         >
                           <Trash2 size={15} />
                         </button>
@@ -189,7 +220,7 @@ const DivisionList = () => {
                     colSpan="4"
                     className="text-center py-12 text-muted-foreground font-medium italic"
                   >
-                    No records found inside the database database collection.
+                    No records found inside the database collection.
                   </td>
                 </tr>
               )}
@@ -198,7 +229,7 @@ const DivisionList = () => {
         </div>
       </div>
 
-      {/* 🛠️ ADD / MODIFY DIVISION MODAL OVERLAY */}
+      {/* Modal Layout Configuration */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/40 backdrop-blur-md">
           <div className="w-full max-w-md bg-background border border-border rounded-2xl shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
@@ -211,14 +242,13 @@ const DivisionList = () => {
               </h2>
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="p-1.5 rounded-lg border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                className="p-1.5 rounded-lg border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-pointer"
               >
                 <X size={16} />
               </button>
             </div>
 
             <form onSubmit={handleSaveDivision} className="p-5 space-y-4">
-              {/* Name Field */}
               <div className="space-y-1.5">
                 <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
                   Division Name *
@@ -235,7 +265,6 @@ const DivisionList = () => {
                 />
               </div>
 
-              {/* Local File Uploader */}
               <div className="space-y-1.5">
                 <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
                   Thumbnail Cover Image
@@ -251,10 +280,10 @@ const DivisionList = () => {
                   onClick={() => fileInputRef.current.click()}
                   className="w-full border-2 border-dashed border-border hover:border-primary/40 rounded-xl p-4 bg-muted/10 hover:bg-primary/5 cursor-pointer flex flex-col items-center justify-center gap-2 group transition-all"
                 >
-                  {formData.thumbnail ? (
+                  {previewUrl ? (
                     <div className="relative w-full h-28 rounded-lg overflow-hidden border border-border shadow-inner">
                       <img
-                        src={formData.thumbnail}
+                        src={previewUrl}
                         alt="Preview"
                         className="w-full h-full object-cover"
                       />
@@ -280,7 +309,6 @@ const DivisionList = () => {
                 </div>
               </div>
 
-              {/* Description Field */}
               <div className="space-y-1.5">
                 <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
                   Summary Description
@@ -296,18 +324,18 @@ const DivisionList = () => {
                 />
               </div>
 
-              {/* Action Buttons */}
               <div className="pt-2 flex items-center justify-end gap-2">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 border border-border rounded-xl text-sm font-medium hover:bg-muted transition-colors"
+                  className="px-4 py-2 border border-border rounded-xl text-sm font-medium hover:bg-muted transition-colors cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
+                  onClick={handleSaveDivision}
                   type="submit"
-                  className="px-4 py-2 bg-primary text-white hover:bg-primary/90 rounded-xl text-sm font-semibold shadow-md shadow-primary/10 transition-colors"
+                  className="px-4 py-2 bg-primary text-white hover:bg-primary/90 rounded-xl text-sm font-semibold shadow-md shadow-primary/10 transition-colors cursor-pointer"
                 >
                   {editingId ? "Apply Changes" : "Save Document"}
                 </button>

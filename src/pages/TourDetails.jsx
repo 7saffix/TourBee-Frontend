@@ -15,9 +15,11 @@ import {
   Heart,
   Share2,
   Info,
+  Loader2,
 } from "lucide-react";
 import { useGetToursQuery } from "../redux/Api/tour.api";
 import { useCreateBookingMutation } from "../redux/Api/booking.api";
+import { useProfileQuery } from "../redux/Api/user.api";
 
 const TourDetails = () => {
   const { id } = useParams();
@@ -29,6 +31,9 @@ const TourDetails = () => {
   } = useGetToursQuery({
     page: 1,
   });
+  const { data: userData } = useProfileQuery();
+  console.log(userData?.data?.email);
+
   const [createBooking, { isLoading: isBooking }] = useCreateBookingMutation();
 
   const tours = toursResponse?.tours || toursResponse?.data || [];
@@ -80,6 +85,12 @@ const TourDetails = () => {
 
   const handleBookingSubmit = async (e) => {
     e.preventDefault();
+
+    if (!userData?.data?.email) {
+      navigate("/login");
+      return;
+    }
+
     const checkoutPayload = {
       tour: tour._id,
       guestCount: Number(guestCount),
@@ -420,10 +431,14 @@ const TourDetails = () => {
             <button
               // to={"/checkout"}
               onClick={handleBookingSubmit}
+              disabled={isBooking}
               className="w-full h-11 bg-primary text-white font-bold text-xs uppercase tracking-wider rounded-xl hover:bg-primary/90 transition-colors flex items-center justify-center gap-2 mt-6 cursor-pointer"
             >
               {isBooking ? (
-                "Booking"
+                <>
+                  <Loader2 size={14} className="animate-spin" />
+                  <span>Booking</span>
+                </>
               ) : (
                 <>
                   <span>Book Now</span>

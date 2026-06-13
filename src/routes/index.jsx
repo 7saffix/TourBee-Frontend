@@ -62,19 +62,19 @@ const router = createBrowserRouter([
   },
 
   {
-    Component: Checkout,
+    Component: AuthCheck(Checkout),
     path: "/checkout",
   },
   {
-    Component: PaymentSuccess,
+    Component: AuthCheck(PaymentSuccess),
     path: "/payment/success",
   },
   {
-    Component: PaymentFailure,
+    Component: AuthCheck(PaymentFailure),
     path: "/payment/fail",
   },
   {
-    Component: PaymentCancel,
+    Component: AuthCheck(PaymentCancel),
     path: "/payment/cancel",
   },
   {

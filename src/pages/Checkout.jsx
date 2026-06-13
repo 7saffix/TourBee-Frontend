@@ -5,13 +5,16 @@ import {
   CheckCircle2,
   MapPin,
   Users,
-  DollarSign,
   ShieldAlert,
+  Loader2,
 } from "lucide-react";
+import { useState } from "react";
 
 const Checkout = () => {
   const location = useLocation();
   const navigate = useNavigate();
+
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const bookingData = location.state?.booking;
   const paymentUrl = location.state?.paymentUrl;
@@ -41,6 +44,7 @@ const Checkout = () => {
 
   const handlePayNow = () => {
     if (paymentUrl) {
+      setIsProcessing(true);
       window.location.href = paymentUrl;
     } else {
       alert(
@@ -138,7 +142,6 @@ const Checkout = () => {
                   <span>{guestCount} Seats Assigned</span>
                 </div>
                 <div className="flex items-center gap-2 font-medium">
-                  <DollarSign size={14} className="text-emerald-500" />
                   <span className="font-mono">
                     ৳{tour?.costForm?.toLocaleString()} / base rate
                   </span>
@@ -176,10 +179,24 @@ const Checkout = () => {
 
               <button
                 onClick={handlePayNow}
-                className="w-full h-11 bg-primary text-white font-bold text-xs uppercase tracking-wider rounded-xl hover:bg-primary/90 transition-all duration-200 active:scale-[0.98] flex items-center justify-center gap-2 cursor-pointer shadow-2xs"
+                disabled={isProcessing}
+                className={`w-full h-11 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all duration-200 flex items-center justify-center gap-2 shadow-2xs ${
+                  isProcessing
+                    ? "bg-primary/70 cursor-not-allowed select-none"
+                    : "bg-primary hover:bg-primary/90 active:scale-[0.98] cursor-pointer"
+                }`}
               >
-                <CreditCard size={14} />
-                <span>Initialize Secure SSL</span>
+                {isProcessing ? (
+                  <>
+                    <Loader2 size={14} className="animate-spin" />
+                    <span>Processing</span>
+                  </>
+                ) : (
+                  <>
+                    <CreditCard size={14} />
+                    <span>Initialize Secure SSL</span>
+                  </>
+                )}
               </button>
             </div>
 
