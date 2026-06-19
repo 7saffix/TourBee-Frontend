@@ -75,7 +75,7 @@ const TourList = () => {
       if (key === "images") return;
 
       if (Array.isArray(payload[key])) {
-        payload[key].forEach((val) => formDataBody.append(key, val));
+        payload[key].forEach((val) => formDataBody.append(`${key}[]`, val));
       } else if (payload[key] !== undefined && payload[key] !== null) {
         formDataBody.append(key, payload[key]);
       }
@@ -94,29 +94,38 @@ const TourList = () => {
   const handleUpdateTourSubmit = async (tourId, payload) => {
     const formDataBody = new FormData();
 
-    payload.images?.forEach((file) => {
-      if (file instanceof File) {
-        formDataBody.append("files", file); // Appends new binary data files
-      } else if (typeof file === "string") {
-        formDataBody.append("existingImages", file); // Optional: if backend tracks existing paths
-      }
-    });
+    // 1. Manually loop through images to separate fresh files from old URLs
+    if (payload.images && payload.images.length > 0) {
+      payload.images.forEach((img) => {
+        if (img instanceof File) {
+          // If it's a new file binary upload
+          formDataBody.append("files", img);
+        } else if (typeof img === "string") {
+          // 🛠️ FIX: If it's an unedited image URL, pass it back so the backend keeps it
+          formDataBody.append("images[]", img);
+        }
+      });
+    }
 
-    // 2. Append standard fields onto data payload model
+    // 2. Append standard text/primitive fields
     Object.keys(payload).forEach((key) => {
+      // Skip images since we handled it above
       if (key === "images") return;
 
       if (Array.isArray(payload[key])) {
-        payload[key].forEach((val) => formDataBody.append(key, val));
+        payload[key].forEach((val) => formDataBody.append(`${key}[]`, val));
       } else if (payload[key] !== undefined && payload[key] !== null) {
         formDataBody.append(key, payload[key]);
       }
     });
 
     try {
-      await updateTour({ tourId, tourInfo: formDataBody }).unwrap();
+      const res = await updateTour({ tourId, tourInfo: formDataBody }).unwrap();
+      console.log(res);
 
-      toast.success("Tour package configured successfully");
+      setModalState((prev) => ({ ...prev, edit: false }));
+      setSelectedTour(null);
+      toast.success("Tour package updated successfully");
     } catch (error) {
       console.error(error);
       toast.error(error.data?.message || "Failed to update tour package.");

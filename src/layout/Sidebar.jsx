@@ -1,6 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
 import { Link, NavLink } from "react-router";
-import { Rocket, LogOut, ChevronLeft, ChevronRight, User } from "lucide-react";
+import { Rocket, ChevronLeft, ChevronRight, User } from "lucide-react";
 import { getSidebarItems } from "../utils/getSidebarItems";
 import { useProfileQuery } from "../redux/Api/user.api";
 
@@ -11,7 +11,7 @@ export const navLinkStyles = ({ isActive }) =>
       : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
   }`;
 
-const Sidebar = ({ isCollapsed, setIsCollapsed, user, onLogout }) => {
+const Sidebar = ({ isCollapsed, setIsCollapsed, user }) => {
   const { data } = useProfileQuery();
   const menuItems = getSidebarItems(data?.data?.role);
   return (
@@ -109,19 +109,6 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, user, onLogout }) => {
             </div>
           )}
         </div>
-
-        <button
-          onClick={onLogout}
-          className={`w-full flex items-center gap-3 px-3.5 py-2.5 mt-2 rounded-xl text-sm font-medium text-destructive hover:bg-destructive/10 transition-all group ${
-            isCollapsed ? "justify-center" : ""
-          }`}
-        >
-          <LogOut
-            size={18}
-            className="shrink-0 transition-transform group-hover:-translate-x-0.5"
-          />
-          {!isCollapsed && <span>Logout</span>}
-        </button>
       </div>
     </aside>
   );

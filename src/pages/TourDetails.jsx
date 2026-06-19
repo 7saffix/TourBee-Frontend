@@ -28,17 +28,18 @@ const TourDetails = () => {
     data: toursResponse,
     isLoading,
     isError,
-  } = useGetToursQuery({
-    page: 1,
-  });
+  } = useGetToursQuery(
+    {
+      _id: id,
+    },
+    { skip: !id },
+  );
+
   const { data: userData } = useProfileQuery();
-  console.log(userData?.data?.email);
 
   const [createBooking, { isLoading: isBooking }] = useCreateBookingMutation();
 
-  const tours = toursResponse?.tours || toursResponse?.data || [];
-
-  const tour = tours.find((item) => item._id === id);
+  const tour = toursResponse?.data?.[0] || [];
 
   const [activeImgIdx, setActiveImgIdx] = useState(0);
   const [guestCount, setGuestCount] = useState(1);

@@ -30,6 +30,7 @@ export const tourAPi = baseApi.injectEndpoints({
         url: "/tour",
         method: "GET",
         params: {
+          _id: params._id || undefined,
           search: params.search || undefined,
           sortBy: params.sortBy || undefined,
           page: params.page || 1,

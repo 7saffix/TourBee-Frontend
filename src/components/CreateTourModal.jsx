@@ -49,6 +49,19 @@ const CreateTourModal = ({
   const handleFormSubmit = async (e) => {
     e.preventDefault();
 
+    // 🛠️ SUBMISSION TIME VALIDATION INTERCEPTION FOR LARGE FILES
+    const sizeLimit = 4 * 1024 * 1024; // 4MB
+    const hasOversizedFile = formData.images.some(
+      (file) => file instanceof File && file.size > sizeLimit,
+    );
+
+    if (hasOversizedFile) {
+      alert(
+        "One or more images exceed the maximum allocation size of 4MB. Upload aborted.",
+      );
+      return; // Stop form submission entirely
+    }
+
     const formattedPayload = {
       ...formData,
       included: formData.included
@@ -64,7 +77,7 @@ const CreateTourModal = ({
         .map((i) => i.trim())
         .filter(Boolean),
       tourPlan: formData.tourPlan
-        .split("\n")
+        .split(",")
         .map((i) => i.trim())
         .filter(Boolean),
       images: formData.images.length > 0 ? formData.images : [],
@@ -72,8 +85,6 @@ const CreateTourModal = ({
 
     try {
       await onCreate(formattedPayload);
-      // setFormData(initialFormState);
-      // setActiveTab("basic");
     } catch (error) {
       console.error("Form transmission rejected:", error);
     }
@@ -197,7 +208,7 @@ const CreateTourModal = ({
                 </div>
                 <div className="space-y-1">
                   <label className="text-xs font-bold text-muted-foreground uppercase">
-                    Base Cost From ($) *
+                    Base Cost From (৳) *
                   </label>
                   <input
                     type="number"
@@ -239,6 +250,20 @@ const CreateTourModal = ({
                   onChange={(e) => {
                     const files = Array.from(e.target.files || []);
                     if (files.length === 0) return;
+
+                    const sizeLimit = 4 * 1024 * 1024; // 4MB
+                    const hasOversizedFile = files.some(
+                      (file) => file.size > sizeLimit,
+                    );
+
+                    if (hasOversizedFile) {
+                      alert(
+                        "One or more images exceed the maximum allocation size of 4MB. Upload aborted.",
+                      );
+                      e.target.value = "";
+                      return;
+                    }
+
                     setFormData((prev) => ({
                       ...prev,
                       images: [...prev.images, ...files],
@@ -258,7 +283,7 @@ const CreateTourModal = ({
                     Upload gallery images from system
                   </span>
                   <p className="text-[10px] text-muted-foreground">
-                    Accepts multiple PNG, JPG, or WebP files
+                    Accepts multiple PNG, JPG, or WebP files (Max 4MB each)
                   </p>
                 </label>
 

@@ -64,6 +64,8 @@ const Tours = () => {
   const { data: tourTypesResponse } = useGetTourTypeQuery();
 
   const tours = toursResponse?.data || [];
+  console.log(tours);
+
   const totalItems = toursResponse?.meta?.total || 0;
   const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE) || 1;
 

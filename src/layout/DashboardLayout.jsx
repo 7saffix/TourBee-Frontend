@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Link, NavLink, Outlet, useNavigate } from "react-router";
-import { Rocket, Menu, X, LogOut } from "lucide-react";
+import { Link, NavLink, Outlet } from "react-router";
+import { Rocket, Menu, X } from "lucide-react";
 
 import Sidebar, { navLinkStyles } from "./Sidebar";
 import { useProfileQuery } from "../redux/Api/user.api";
@@ -10,14 +10,9 @@ const DashboardLayout = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const { data } = useProfileQuery();
-  const navigate = useNavigate();
 
   const user = data?.data;
   const menuItems = getSidebarItems(user?.role);
-
-  const handleLogout = async () => {
-    navigate("/login");
-  };
 
   return (
     <div className="min-h-screen w-full bg-background flex text-foreground antialiased">
@@ -26,7 +21,6 @@ const DashboardLayout = () => {
         isCollapsed={isCollapsed}
         setIsCollapsed={setIsCollapsed}
         user={user}
-        onLogout={handleLogout}
       />
 
       {/* Core Body Container Frame */}
@@ -105,17 +99,6 @@ const DashboardLayout = () => {
                 </p>
               </div>
             </div>
-
-            <button
-              onClick={() => {
-                setIsMobileOpen(false);
-                handleLogout();
-              }}
-              className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-destructive hover:bg-destructive/10 transition-all"
-            >
-              <LogOut size={18} />
-              <span>Logout Account</span>
-            </button>
           </div>
         </div>
 

@@ -29,8 +29,43 @@ const Login = () => {
     }
   };
 
+  const fillCredentials = (email) => {
+    setFormData({ email, password: "12345678" });
+    toast.info(`Populated form with ${email}`);
+  };
+
   return (
-    <div className="min-h-[calc(100vh-4rem)] w-full flex items-center justify-center bg-background px-4 py-12 sm:px-6 lg:px-8">
+    <div className="min-h-[calc(100vh-4rem)] w-full  bg-background px-4 py-12 sm:px-6 lg:px-8 flex flex-col items-center justify-center">
+      <div className="w-full max-w-md p-4 bg-muted/20 border border-border rounded-2xl backdrop-blur-md select-none my-2">
+        <div className="flex items-center gap-2 mb-2.5 text-left">
+          <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></div>
+          <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider font-mono">
+            Mock Profiles (Click to Auto-Fill)
+          </span>
+        </div>
+
+        {/* Change the layout wrapper to grid */}
+        <div className=" grid grid-cols-2 text-xs gap-2">
+          {/* Admin Credentials Set */}
+          <button
+            type="button"
+            onClick={() => fillCredentials("admin@demo.com")}
+            className="text-foreground font-semibold hover:text-primary hover:border-primary/50 transition-colors cursor-pointer border border-border p-1 rounded-md font-mono bg-background/50 w-full text-center"
+          >
+            admin@demo.com
+          </button>
+
+          {/* User Credentials Set */}
+          <button
+            type="button"
+            onClick={() => fillCredentials("user@demo.com")}
+            className="text-foreground font-semibold hover:text-primary hover:border-primary/50 transition-colors cursor-pointer border border-border p-1 rounded-md font-mono bg-background/50 w-full text-center"
+          >
+            user@demo.com
+          </button>
+        </div>
+      </div>
+
       {/* Centralized Minimalist Auth Card */}
       <div className="w-full max-w-md space-y-8 bg-background border border-border p-8 rounded-2xl shadow-xl transition-all duration-300 hover:border-border/80">
         {/* Header/Branding */}
