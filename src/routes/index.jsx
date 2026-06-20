@@ -56,7 +56,7 @@ const router = createBrowserRouter([
     Component: AuthCheck(DashboardLayout, ["ADMIN", "SUPER_ADMIN"]),
     path: "/admin",
     children: [
-      { index: true, element: <Navigate to="/admin/tours" /> },
+      { index: true, element: <Navigate to="/admin/analytics" /> },
       ...generateRoutes(AdminSideBarItems),
     ],
   },
